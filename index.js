@@ -19,7 +19,6 @@ function enumValueToString() {
 
 function enumValueFunc(enumInst, enumName, props) {
     const enumValue = function (name, value) {
-        const symbol = Symbol(name);
 
         // Object.setPrototypeOf(this, props);
         Object.defineProperty(this, 'name', {
@@ -28,31 +27,60 @@ function enumValueFunc(enumInst, enumName, props) {
             enumerable: true,
         });
 
-        Object.defineProperty(this, '_symbol', {
-            value: symbol,
-            writable: false,
-            enumerable: false,
-        });
+        if (typeof value === "object") {
+            const symbol = Symbol(name);
+            Object.defineProperty(this, '_value', {
+                value: symbol,
+                writable: false,
+                enumerable: false,
+            });
 
-        // // copy value props to enumValue
-        const valueKeys = Object.keys(value);
-        let j = valueKeys.length;
-        while (j--) {
-            const key = valueKeys[j];
-            const valueElement = value[key];
-            this[key] = isFunction(valueElement) ? valueElement.bind(this) : valueElement;
+            // // copy value props to enumValue
+            const valueKeys = Object.keys(value);
+            let j = valueKeys.length;
+            while (j--) {
+                const key = valueKeys[j];
+                const valueElement = value[key];
+                if (isFunction(valueElement) && valueElement.length === 0) {
+                    Object.defineProperty(this, key, {
+                        get: valueElement,
+                    });
+                } else {
+                    this[key] = isFunction(valueElement) ? valueElement.bind(this) : valueElement;
+                }
+            }
+        } else {
+            Object.defineProperty(this, '_value', {
+                value: value,
+                writable: false,
+                enumerable: false,
+            });
         }
 
         Object.freeze(this);
     };
 
     const propsProto = Object.create(props ? props : null);
+
+    // convert functions without arguments to getters
+    const propKeys = Object.keys(props);
+    let i = propKeys.length;
+    while (i--) {
+        const propKey = propKeys[i];
+        const propValue = propsProto[propKey];
+        if (isFunction(propValue) && propValue.length === 0) {
+            Object.defineProperty(propsProto.__proto__, propKey, {
+                get: propValue,
+            });
+        }
+    }
+
     propsProto.enum = enumInst;
     propsProto.name = enumName;
 
     propsProto[Symbol.toPrimitive] = function (hint) {
         if (hint === 'number') return this.enum.values.indexOf(this);
-        return this._symbol;
+        return this._value;
     };
 
     Object.defineProperty(propsProto, 'index', {
@@ -102,6 +130,9 @@ function Enum(enumName, keyName, values, props) {
     const names = Object.keys(values);
     const keyNameValues = {};
     const iMax = names.length;
+    let objectValues = 0;
+    let nonObjectValues = 0;
+    let functionValues = 0;
     for (let i = 0; i < iMax; i++) {
         const name = names[i];
         const value = values[name];
@@ -117,6 +148,15 @@ function Enum(enumName, keyName, values, props) {
                 throw `IllegalArgument, enum with ${keyName} of '${value[keyName]}' is already defined by ${keyNameValues[value[keyName]]._name}`;
             }
             keyNameValues[value[keyName]] = enumValue;
+        } else {
+            if (value === UNDEFINED) {
+                throw `IllegalArgument, value of each enum value cannot be undefined`;
+            }
+
+            if (keyNameValues[value] !== UNDEFINED) {
+                throw `IllegalArgument, enum with value of '${value}' is already defined by ${keyNameValues[value]._name}`;
+            }
+            keyNameValues[value] = enumValue;
         }
 
         Object.defineProperty(this, name, {
@@ -125,10 +165,30 @@ function Enum(enumName, keyName, values, props) {
             enumerable: true,
         });
 
+        if (typeof value === 'object') {
+            if (isFunction(value)) {
+                functionValues++;
+            } else {
+                objectValues++;
+            }
+        } else {
+            nonObjectValues++;
+        }
+
         enumValues.push(enumValue);
     }
 
-    enumValues.sort((a, b) => a[keyName] > b[keyName] ? 1 : -1);
+    if (objectValues !== 0 && nonObjectValues !== 0) {
+        // inconsistent value types
+        throw `IllegalArgument, enum values must all be objects or all non-objects, got ${objectValues} object values, ${nonObjectValues} non-object values`;
+    }
+
+    if (keyName !== UNDEFINED) {
+        enumValues.sort((a, b) => a[keyName] > b[keyName] ? 1 : -1);
+    } else {
+        enumValues.sort((a, b) => a._value > b._value ? 1 : -1);
+    }
+
     Object.freeze(enumValues);
 
     Object.defineProperty(this, 'values', {
@@ -152,6 +212,22 @@ function Enum(enumName, keyName, values, props) {
             value: function (key) {
                 return forEach.call(enumValues, (enumValue) => {
                     if (enumValue[keyName] === key) return BREAK(enumValue);
+                });
+            },
+        });
+    } else {
+        const enumKeys = enumValues.map(value => value._value);
+        Object.defineProperty(this, 'keys', {
+            value: enumKeys,
+            writable: false,
+            enumerable: false,
+        });
+
+        // define property with value to return matching enumValue to the key
+        Object.defineProperty(this, 'value', {
+            value: function (key) {
+                return forEach.call(enumValues, (enumValue) => {
+                    if (enumValue._value === key) return BREAK(enumValue);
                 });
             },
         });
