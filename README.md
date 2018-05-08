@@ -1,4 +1,4 @@
-# enum-type
+# enumerated-type
 
 [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
 
@@ -11,14 +11,14 @@ each enum value can have own properties.
 Use [npm](https://npmjs.com/) to install.
 
 ```sh
-npm install enum-type --save
+npm install enumerated-type --save
 ```
 
 ## Usage
 
-[![NPM](https://nodei.co/npm/enum-type.png)](https://www.npmjs.com/package/enum-type)
+[![NPM](https://nodei.co/npm/enumerated-type.png)](https://www.npmjs.com/package/enumerated-type)
 
 ## License
 
-MIT, see [LICENSE.md](http://github.com/vsch/enum-type/blob/master/LICENSE.md) for details.
+MIT, see [LICENSE.md](http://github.com/vsch/enumerated-type/blob/master/LICENSE.md) for details.
 

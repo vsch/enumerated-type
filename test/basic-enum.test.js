@@ -1,6 +1,6 @@
 "use strict";
 
-const Enum = require("enum-type");
+const Enum = require("enumerated-type");
 
 const StepType = new Enum("StepType", "stepTypeId", {
     duty: { stepTypeId: 1, isDuty: true, },

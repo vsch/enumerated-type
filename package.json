@@ -1,5 +1,5 @@
 {
-  "name": "enum-type",
+  "name": "enumerated-type",
   "version": "0.1.0",
   "description": "enum type for javascript",
   "main": "index.js",
@@ -24,10 +24,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/vsch/enum-type.git"
+    "url": "git://github.com/vsch/enumerated-type.git"
   },
-  "homepage": "https://github.com/vsch/enum-type",
+  "homepage": "https://github.com/vsch/enumerated-type",
   "bugs": {
-    "url": "https://github.com/vsch/enum-type/issues"
+    "url": "https://github.com/vsch/enumerated-type/issues"
   }
 }
