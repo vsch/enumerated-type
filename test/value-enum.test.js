@@ -13,20 +13,20 @@ const StepTypeEnum = {
 };
 
 const StepType = new Enum("StepType", undefined, StepTypeEnum, {
-    isDuty: function () { return this._value === 1; },
-    isVariable: function () { return this._value === 2; },
-    isOptional: function () { return this._value === 3; },
-    isGateway: function () { return this._value >= 4; },
-    isXor: function () { return this._value === 4 || this._value === 6; },
-    isAnd: function () { return this._value === 5 || this._value === 7; },
-    isCombined: function () { return this._value === 6 || this._value === 7; },
+    isDuty: function () { return this.value === 1; },
+    isVariable: function () { return this.value === 2; },
+    isOptional: function () { return this.value === 3; },
+    isGateway: function () { return this.value >= 4; },
+    isXor: function () { return this.value === 4 || this.value === 6; },
+    isAnd: function () { return this.value === 5 || this.value === 7; },
+    isCombined: function () { return this.value === 6 || this.value === 7; },
 });
 
 test('has all values in order of keys', () => {
     expect(StepType.values.map(enumValue => {
         return {
             name: enumValue.name,
-            key: enumValue._value,
+            key: enumValue.value,
             index: enumValue.index,
         }
     })).toEqual([
@@ -63,7 +63,7 @@ test('all values have correct properties', () => {
             isVariable: value.isVariable,
             isXor: value.isXor,
             name: value.name,
-            stepTypeId: value._value,
+            stepTypeId: value.value,
         });
     }
 
@@ -199,13 +199,13 @@ test('can use enum values as property names', () => {
 
 test('enum values as property names equal their values', () => {
     let obj = {};
-    obj[StepType.duty._value] = "++StepType.duty._value";
-    obj[StepType.variable._value] = "++StepType.variable._value";
-    obj[StepType.optional._value] = "++StepType.optional._value";
-    obj[StepType.xor._value] = "++StepType.xor._value";
-    obj[StepType.and._value] = "++StepType.and._value";
-    obj[StepType.combineXor._value] = "++StepType.combineXor._value";
-    obj[StepType.combineAnd._value] = "++StepType.combineAnd._value";
+    obj[StepType.duty.value] = "++StepType.duty.value";
+    obj[StepType.variable.value] = "++StepType.variable.value";
+    obj[StepType.optional.value] = "++StepType.optional.value";
+    obj[StepType.xor.value] = "++StepType.xor.value";
+    obj[StepType.and.value] = "++StepType.and.value";
+    obj[StepType.combineXor.value] = "++StepType.combineXor.value";
+    obj[StepType.combineAnd.value] = "++StepType.combineAnd.value";
     obj[StepType.duty] = "--duty";
     obj[StepType.variable] = "--variable";
     obj[StepType.optional] = "--optional";
@@ -235,13 +235,13 @@ test('enum values as property names equal their values', () => {
 
 test('enum values as array indices equal their values', () => {
     let obj = [];
-    obj[StepType.duty._value] = "++StepType.duty._value";
-    obj[StepType.variable._value] = "++StepType.variable._value";
-    obj[StepType.optional._value] = "++StepType.optional._value";
-    obj[StepType.xor._value] = "++StepType.xor._value";
-    obj[StepType.and._value] = "++StepType.and._value";
-    obj[StepType.combineXor._value] = "++StepType.combineXor._value";
-    obj[StepType.combineAnd._value] = "++StepType.combineAnd._value";
+    obj[StepType.duty.value] = "++StepType.duty.value";
+    obj[StepType.variable.value] = "++StepType.variable.value";
+    obj[StepType.optional.value] = "++StepType.optional.value";
+    obj[StepType.xor.value] = "++StepType.xor.value";
+    obj[StepType.and.value] = "++StepType.and.value";
+    obj[StepType.combineXor.value] = "++StepType.combineXor.value";
+    obj[StepType.combineAnd.value] = "++StepType.combineAnd.value";
     obj[StepType.duty] = "--duty";
     obj[StepType.variable] = "--variable";
     obj[StepType.optional] = "--optional";

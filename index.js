@@ -29,7 +29,7 @@ function enumValueFunc(enumInst, enumName, props) {
 
         if (typeof value === "object") {
             const symbol = Symbol(name);
-            Object.defineProperty(this, '_value', {
+            Object.defineProperty(this, 'value', {
                 value: symbol,
                 writable: false,
                 enumerable: false,
@@ -50,7 +50,7 @@ function enumValueFunc(enumInst, enumName, props) {
                 }
             }
         } else {
-            Object.defineProperty(this, '_value', {
+            Object.defineProperty(this, 'value', {
                 value: value,
                 writable: false,
                 enumerable: false,
@@ -80,7 +80,7 @@ function enumValueFunc(enumInst, enumName, props) {
 
     propsProto[Symbol.toPrimitive] = function (hint) {
         if (hint === 'number') return this.enum.values.indexOf(this);
-        return this._value;
+        return this.value;
     };
 
     Object.defineProperty(propsProto, 'index', {
@@ -186,7 +186,7 @@ function Enum(enumName, keyName, values, props) {
     if (keyName !== UNDEFINED) {
         enumValues.sort((a, b) => a[keyName] > b[keyName] ? 1 : -1);
     } else {
-        enumValues.sort((a, b) => a._value > b._value ? 1 : -1);
+        enumValues.sort((a, b) => a.value > b.value ? 1 : -1);
     }
 
     Object.freeze(enumValues);
@@ -216,7 +216,7 @@ function Enum(enumName, keyName, values, props) {
             },
         });
     } else {
-        const enumKeys = enumValues.map(value => value._value);
+        const enumKeys = enumValues.map(value => value.value);
         Object.defineProperty(this, 'keys', {
             value: enumKeys,
             writable: false,
@@ -227,7 +227,7 @@ function Enum(enumName, keyName, values, props) {
         Object.defineProperty(this, 'value', {
             value: function (key) {
                 return forEach.call(enumValues, (enumValue) => {
-                    if (enumValue._value === key) return BREAK(enumValue);
+                    if (enumValue.value === key) return BREAK(enumValue);
                 });
             },
         });

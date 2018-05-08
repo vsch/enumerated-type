@@ -139,11 +139,11 @@ additional properties:
 * `.enum`: parent enum instance.
 * `.name`: name of the enum value (property name in values object passed to `Enum()`
   constructor.
-* `._value`: Symbol(name) symbol instance for the property name of the enum value.
+* `.value`: Symbol(name) symbol instance for the property name of the enum value.
 * `.index`: the enum value's index within enum instances values array.
 * `.next`: enum value after this enum or `undefined` if last enum value.
 * `.previous`: enum value before this enum or `undefined` if first enum value.
-* `[Symbol.toPrimitive]`: returns `_value` property for `string` or `default` hint, for `number`
+* `[Symbol.toPrimitive]`: returns `value` property for `string` or `default` hint, for `number`
   returns the enum value's index within enum instances values array.
 
 Functions passed in as property values for enum value properties or `commonProperties` will have
