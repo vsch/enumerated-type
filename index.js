@@ -10,6 +10,10 @@ const filter = forEachBreak.filter;
 
 const UNDEFINED = void 0;
 
+function EnumValue(name, value, props) {
+
+}
+
 function Enum(enumName, keyName, values, props) {
     if (keyName !== UNDEFINED && (typeof keyName !== "string" || keyName === '')) {
         throw `IllegalArgument, keyName must be undefined or a non-empty string, got '${keyName}'`;
@@ -22,8 +26,8 @@ function Enum(enumName, keyName, values, props) {
         enumerable: false,
     });
 
-    props = Object.create(props ? props : null);
-    props.constructor = Symbol;
+    // props = Object.create(props ? props : null);
+    // props.constructor = Symbol;
     props.enum = this;
 
     const names = Object.keys(values);
@@ -35,7 +39,8 @@ function Enum(enumName, keyName, values, props) {
 
         const symbol = Symbol(name);
         const enumValue = Object(symbol);
-        enumValue.__proto__ = props;
+        // Object.setPrototypeOf(enumValue, props);
+        // enumValue.__proto__ = props;
 
         Object.defineProperty(enumValue, 'name', {
             value: name,
@@ -58,9 +63,23 @@ function Enum(enumName, keyName, values, props) {
         const valueKeys = Object.keys(value);
         let j = valueKeys.length;
         while (j--) {
-            let key = valueKeys[j];
+            const key = valueKeys[j];
             const valueElement = value[key];
             enumValue[key] = isFunction(valueElement) ? valueElement.bind(enumValue) : valueElement;
+        }
+
+        const propKeys = Object.keys(props);
+        j = propKeys.length;
+        while (j--) {
+            const key = propKeys[j];
+            if (!enumValue.hasOwnProperty(key)) {
+                const valueElement = props[key];
+                Object.defineProperty(enumValue, key, {
+                    value: isFunction(valueElement) ? valueElement.bind(enumValue) : valueElement,
+                    writable: false,
+                    enumerable: false,
+                });
+            }
         }
 
         Object.freeze(enumValue);
@@ -131,8 +150,8 @@ Enum.prototype[Symbol.hasInstance] = function hasInstance(instance) {
     return this.values.indexOf(instance) !== -1;
 };
 
-Enum.prototype[Symbol.toStringTag] = function toString() {
-    return this.name;
+Enum.prototype.toString = function toString() {
+    return '[object Enum(' + this.name +')]';
 };
 
 module.exports = Enum;

@@ -88,28 +88,44 @@ test('all keys in keys', () => {
 
 test('all values can be found by keys', () => {
     expect([1, 2, 3, 4, 5, 6, 7,].map(key => StepType.stepTypeId(key))).toEqual([
-        { name: "duty", isDuty: true, stepTypeId: 1 },
-        { name: "variable", isVariable: true, stepTypeId: 2 },
-        { name: "optional", isOptional: true, stepTypeId: 3 },
-        { name: "xor", isGateway: true, isXor: true, stepTypeId: 4 },
-        { name: "and", isAnd: true, isGateway: true, stepTypeId: 5 },
-        { name: "combineXor", isCombined: true, isGateway: true, isXor: true, stepTypeId: 6 },
-        { name: "combineAnd", isAnd: true, isCombined: true, isGateway: true, stepTypeId: 7 },
-        ]);
+        StepType.duty,
+        StepType.variable,
+        StepType.optional,
+        StepType.xor,
+        StepType.and,
+        StepType.combineXor,
+        StepType.combineAnd,
+    ]);
 });
 
 test('can switch on enum values', () => {
     let values = [];
     StepType.forEach(value => {
         switch (value) {
-            case StepType.duty :values.push('duty'); break;
-            case StepType.variable :values.push('variable'); break;
-            case StepType.optional :values.push('optional'); break;
-            case StepType.xor :values.push('xor'); break;
-            case StepType.and :values.push('and'); break;
-            case StepType.combineXor :values.push('combineXor'); break;
-            case StepType.combineAnd :values.push('combineAnd'); break;
-            default: values.push('unknown');break;
+            case StepType.duty :
+                values.push('duty');
+                break;
+            case StepType.variable :
+                values.push('variable');
+                break;
+            case StepType.optional :
+                values.push('optional');
+                break;
+            case StepType.xor :
+                values.push('xor');
+                break;
+            case StepType.and :
+                values.push('and');
+                break;
+            case StepType.combineXor :
+                values.push('combineXor');
+                break;
+            case StepType.combineAnd :
+                values.push('combineAnd');
+                break;
+            default:
+                values.push('unknown');
+                break;
         }
     });
 
@@ -121,7 +137,7 @@ test('can switch on enum values', () => {
         "and",
         "combineXor",
         "combineAnd",
-        ]);
+    ]);
 });
 
 test('can test equals on enum values', () => {
@@ -145,7 +161,33 @@ test('can test equals on enum values', () => {
         "and",
         "combineXor",
         "combineAnd",
-        ]);
+    ]);
+});
+
+test('can use enum values as property names', () => {
+    let obj = {};
+    obj[StepType.duty] = "--duty";
+    obj[StepType.variable] = "--variable";
+    obj[StepType.optional] = "--optional";
+    obj[StepType.xor] = "--xor";
+    obj[StepType.and] = "--and";
+    obj[StepType.combineXor] = "--combineXor";
+    obj[StepType.combineAnd] = "--combineAnd";
+
+    let values = [];
+    StepType.forEach(value => {
+        values.push(obj[value]);
+    });
+
+    expect(values).toEqual([
+        "--duty",
+        "--variable",
+        "--optional",
+        "--xor",
+        "--and",
+        "--combineXor",
+        "--combineAnd",
+    ]);
 });
 
 console.log(StepType);
