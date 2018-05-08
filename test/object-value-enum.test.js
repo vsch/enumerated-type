@@ -2,7 +2,7 @@
 
 const Enum = require("enumerated-type");
 
-const StepType = new Enum("StepType", "stepTypeId", {
+const StepTypeEnum = {
     duty: { stepTypeId: 1, isDuty: true, },
     variable: { stepTypeId: 2, isVariable: true, },
     optional: { stepTypeId: 3, isOptional: true, },
@@ -10,7 +10,9 @@ const StepType = new Enum("StepType", "stepTypeId", {
     and: { stepTypeId: 5, isGateway: true, isAnd: true, },
     combineXor: { stepTypeId: 6, isGateway: true, isXor: true, isCombined: true, },
     combineAnd: { stepTypeId: 7, isGateway: true, isAnd: true, isCombined: true, },
-}, {
+};
+
+const StepType = new Enum("StepType", "stepTypeId", StepTypeEnum, {
     isDuty: false,
     isVariable: false,
     isOptional: false,
@@ -166,6 +168,7 @@ test('can test equals on enum values', () => {
 
 test('can use enum values as property names', () => {
     let obj = {};
+    obj['duty'] = "++duty";
     obj[StepType.duty] = "--duty";
     obj[StepType.variable] = "--variable";
     obj[StepType.optional] = "--optional";
@@ -173,6 +176,8 @@ test('can use enum values as property names', () => {
     obj[StepType.and] = "--and";
     obj[StepType.combineXor] = "--combineXor";
     obj[StepType.combineAnd] = "--combineAnd";
+
+    expect(obj.duty).toEqual('++duty');
 
     let values = [];
     StepType.forEach(value => {
@@ -188,10 +193,43 @@ test('can use enum values as property names', () => {
         "--combineXor",
         "--combineAnd",
     ]);
+
+});
+
+test('enum values next is next enum value', () => {
+    let obj = {};
+    obj['duty'] = "++duty";
+    obj[StepType.duty] = "--duty";
+    obj[StepType.variable] = "--variable";
+    obj[StepType.optional] = "--optional";
+    obj[StepType.xor] = "--xor";
+    obj[StepType.and] = "--and";
+    obj[StepType.combineXor] = "--combineXor";
+    obj[StepType.combineAnd] = "--combineAnd";
+
+    expect(obj.duty).toEqual('++duty');
+
+    let values = [];
+    StepType.forEach(value => {
+        values.push(obj[value]);
+    });
+
+    expect(values).toEqual([
+        "--duty",
+        "--variable",
+        "--optional",
+        "--xor",
+        "--and",
+        "--combineXor",
+        "--combineAnd",
+    ]);
+
 });
 
 console.log(StepType);
 console.log('' + StepType);
 console.log(StepType.duty);
+console.log(+StepType.duty);
+console.log((+StepType.duty) + 1);
 console.log(typeof StepType.duty);
 

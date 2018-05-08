@@ -1,4 +1,4 @@
-'use strict';
+// 'use strict';
 
 const isFunction = require("lodash.isfunction");
 const forEachBreak = require("for-each-break");
@@ -10,8 +10,80 @@ const filter = forEachBreak.filter;
 
 const UNDEFINED = void 0;
 
-function EnumValue(name, value, props) {
+/**
+ * @return {string}
+ */
+function enumValueToString() {
+    return `[Symbol: Symbol(${this.name}) ${JSON.stringify(this)}]`;
+}
 
+function enumValueFunc(enumInst, enumName, props) {
+    const enumValue = function (name, value) {
+        const symbol = Symbol(name);
+
+        // Object.setPrototypeOf(this, props);
+        Object.defineProperty(this, 'name', {
+            value: name,
+            writable: false,
+            enumerable: true,
+        });
+
+        Object.defineProperty(this, '_symbol', {
+            value: symbol,
+            writable: false,
+            enumerable: false,
+        });
+
+        // // copy value props to enumValue
+        const valueKeys = Object.keys(value);
+        let j = valueKeys.length;
+        while (j--) {
+            const key = valueKeys[j];
+            const valueElement = value[key];
+            this[key] = isFunction(valueElement) ? valueElement.bind(this) : valueElement;
+        }
+
+        Object.freeze(this);
+    };
+
+    const propsProto = Object.create(props ? props : null);
+    propsProto.enum = enumInst;
+    propsProto.name = enumName;
+
+    propsProto[Symbol.toPrimitive] = function (hint) {
+        if (hint === 'number') return this.enum.values.indexOf(this);
+        return this._symbol;
+    };
+
+    Object.defineProperty(propsProto, 'index', {
+        get: function () {
+            return this.enum.values.indexOf(this);
+        },
+        enumerable: true,
+    });
+
+    Object.defineProperty(propsProto, 'next', {
+        get: function () {
+            const values = this.enum.values;
+            const index = values.indexOf(this);
+            return index >= 0 && index + 1 < values.length ? values[index + 1] : UNDEFINED;
+        },
+        enumerable: true,
+    });
+
+    Object.defineProperty(propsProto, 'previous', {
+        get: function () {
+            const values = this.enum.values;
+            const index = values.indexOf(this);
+            return index >= 1 && index < values.length ? values[index - 1] : UNDEFINED;
+        },
+        enumerable: true,
+    });
+
+    Object.freeze(propsProto);
+
+    enumValue.prototype = propsProto;
+    return enumValue;
 }
 
 function Enum(enumName, keyName, values, props) {
@@ -26,10 +98,7 @@ function Enum(enumName, keyName, values, props) {
         enumerable: false,
     });
 
-    // props = Object.create(props ? props : null);
-    // props.constructor = Symbol;
-    props.enum = this;
-
+    const enumValueConstructor = enumValueFunc(this, enumName, props);
     const names = Object.keys(values);
     const keyNameValues = {};
     const iMax = names.length;
@@ -37,16 +106,7 @@ function Enum(enumName, keyName, values, props) {
         const name = names[i];
         const value = values[name];
 
-        const symbol = Symbol(name);
-        const enumValue = Object(symbol);
-        // Object.setPrototypeOf(enumValue, props);
-        // enumValue.__proto__ = props;
-
-        Object.defineProperty(enumValue, 'name', {
-            value: name,
-            writable: false,
-            enumerable: true,
-        });
+        const enumValue = new enumValueConstructor(name, value);
 
         if (keyName !== UNDEFINED) {
             if (value[keyName] === UNDEFINED) {
@@ -58,31 +118,6 @@ function Enum(enumName, keyName, values, props) {
             }
             keyNameValues[value[keyName]] = enumValue;
         }
-
-        // copy value props to enumValue
-        const valueKeys = Object.keys(value);
-        let j = valueKeys.length;
-        while (j--) {
-            const key = valueKeys[j];
-            const valueElement = value[key];
-            enumValue[key] = isFunction(valueElement) ? valueElement.bind(enumValue) : valueElement;
-        }
-
-        const propKeys = Object.keys(props);
-        j = propKeys.length;
-        while (j--) {
-            const key = propKeys[j];
-            if (!enumValue.hasOwnProperty(key)) {
-                const valueElement = props[key];
-                Object.defineProperty(enumValue, key, {
-                    value: isFunction(valueElement) ? valueElement.bind(enumValue) : valueElement,
-                    writable: false,
-                    enumerable: false,
-                });
-            }
-        }
-
-        Object.freeze(enumValue);
 
         Object.defineProperty(this, name, {
             value: enumValue,
@@ -151,7 +186,7 @@ Enum.prototype[Symbol.hasInstance] = function hasInstance(instance) {
 };
 
 Enum.prototype.toString = function toString() {
-    return '[object Enum(' + this.name +')]';
+    return '[object Enum(' + this.name + ')]';
 };
 
 module.exports = Enum;
