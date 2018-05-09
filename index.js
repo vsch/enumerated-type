@@ -1,6 +1,7 @@
 // 'use strict';
 
 const isFunction = require("lodash.isfunction");
+const isString = require("lodash.isstring");
 const forEachBreak = require("for-each-break");
 const BREAK = forEachBreak.BREAK;
 const RETURN = forEachBreak.RETURN;
@@ -83,29 +84,29 @@ function enumValueFunc(enumInst, enumName, props) {
         return this.value;
     };
 
-    Object.defineProperty(propsProto, 'index', {
-        get: function () {
-            return this.enum.values.indexOf(this);
+    Object.defineProperties(propsProto, {
+        index: {
+            get: function () {
+                return this.enum.values.indexOf(this);
+            },
+            enumerable: true,
         },
-        enumerable: true,
-    });
-
-    Object.defineProperty(propsProto, 'next', {
-        get: function () {
-            const values = this.enum.values;
-            const index = values.indexOf(this);
-            return index >= 0 && index + 1 < values.length ? values[index + 1] : UNDEFINED;
+        next: {
+            get: function () {
+                const values = this.enum.values;
+                const index = values.indexOf(this);
+                return index >= 0 && index + 1 < values.length ? values[index + 1] : UNDEFINED;
+            },
+            enumerable: true,
         },
-        enumerable: true,
-    });
-
-    Object.defineProperty(propsProto, 'previous', {
-        get: function () {
-            const values = this.enum.values;
-            const index = values.indexOf(this);
-            return index >= 1 && index < values.length ? values[index - 1] : UNDEFINED;
+        previous: {
+            get: function () {
+                const values = this.enum.values;
+                const index = values.indexOf(this);
+                return index >= 1 && index < values.length ? values[index - 1] : UNDEFINED;
+            },
+            enumerable: true,
         },
-        enumerable: true,
     });
 
     Object.freeze(propsProto);
@@ -115,9 +116,11 @@ function enumValueFunc(enumInst, enumName, props) {
 }
 
 function Enum(enumName, keyName, values, props) {
-    if (keyName !== UNDEFINED && (typeof keyName !== "string" || keyName === '')) {
-        throw `IllegalArgument, keyName must be undefined or a non-empty string, got '${keyName}'`;
+    if (keyName !== UNDEFINED && keyName !== null && !isString(keyName)) {
+        throw `IllegalArgument, keyName must be undefined, null or a string, got '${keyName}'`;
     }
+
+    if (keyName === null || keyName === '') keyName = UNDEFINED;
 
     const enumValues = [];
     Object.defineProperty(this, 'name', {

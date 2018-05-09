@@ -2,10 +2,15 @@
 
 [TOC]: # " "
 
+- [0.3.2](#032)
 - [0.3.0](#030)
 - [0.2.0](#020)
 - [0.1.0](#010)
 
+
+## 0.3.2
+
+* Change: allow null and empty string for keyName arg to mean undefined.
 
 ## 0.3.0
 
