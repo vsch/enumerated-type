@@ -107,29 +107,24 @@ expect(values).toEqual([
 
 ### Enum Instance Properties
 
+<!--@formatter:off-->
+
 * `.name` : name of the enum passed to constructor
-* `.values` : array of enum values sorted by `keyPropName` if provided or by value if non-object
-  values.
-* `.keys` : array of enum key properties if keyPropName was passed to constructor, otherwise
-  array of enum values which were not objects
-* `[keyPropName](key)`: function taking key and returning enum value whose `keyPropName` equals
-  the value of the key. Only defined if `keyPropName` is defined and is a string. Convenience
-  method for converting key property value to an enum value.
-* `.value(key)`: function taking the a value and returning enum value whose value equals the
-  key. Only defined if `keyPropName` is not defined.
-* `.forEach`: function (callback, defaultResult) taking a callback function(value, index,
-  values) and optional default result if callback does not return `BREAK(result)` or
-  `RETURN(result)`. see [for-each-break]
-* `.map`: function (callback) taking a callback function(value, index, values) and returning
-  array of values returned my callback, unless callback returns `BREAK(result)` or
-  `RETURN(result)`. see [for-each-break]
-* `.filter`: function (callback) taking a callback function(value, index, values) and returning
-  array of values for which callback result tested true, unless callback returns `BREAK(result)`
-  or `RETURN(result)`. see [for-each-break]
+* `.values` : array of enum values sorted by `keyPropName` if provided or by value if non-object values.
+* `.keys` : array of enum key properties if keyPropName was passed to constructor, otherwise array of enum values which were not objects
+* `[keyPropName](key)`: function taking key and returning enum value whose `keyPropName` equals the value of the key. Only defined if `keyPropName` is defined and is a string. Convenience method for converting key property value to an enum value.
+* `.value(key)`: function taking the a value and returning enum value whose value equals the key. Only defined if `keyPropName` is not defined.
+* `.filter`: `function (callback, thisArg)` taking a callback `function(value, index, values)` and returning array of values for which callback result tested true, unless callback returns `BREAK(result)` or `RETURN(result)`. see [for-each-break]
+* `.forEach`: `function (callback, thisArg, defaultResult)` taking a callback `function(value, index, values)` and optional default result if callback does not return `BREAK(result)` or `RETURN(result)`. see [for-each-break]
+* `.map`: `function (callback, thisArg)` taking a callback `function(value, index, values)` and returning array of values returned my callback, unless callback returns `BREAK(result)` or `RETURN(result)`. see [for-each-break]
+* `.filterRight`: `function (callback, thisArg, thisArg)` taking a callback `function(value, index, values)` and returning array of values for which callback result tested true, unless callback returns `BREAK(result)` or `RETURN(result)`. see [for-each-break]
+* `.forEachRight`: `function (callback, thisArg, thisArg, defaultResult)` taking a callback `function(value, index, values)` and optional default result if callback does not return `BREAK(result)` or `RETURN(result)`. see [for-each-break]
+* `.mapRight`: `function (callback, thisArg, thisArg)` taking a callback `function(value, index, values)` and returning array of values returned my callback, unless callback returns `BREAK(result)` or `RETURN(result)`. see [for-each-break]
 * `[Symbol.iterator]`: iterator over enum values
-* `[Symbol.hasInstance]`: handles `instanceof` and returns true when left hand side is an enum
-  value of this enum instance.
+* `[Symbol.hasInstance]`: handles `instanceof` and returns true when left hand side is an enum value of this enum instance.
 * `.toString`: returns `[object Enum(enumName)]`
+
+<!--@formatter:on-->
 
 ### Enum Value Instance Properties
 
@@ -146,10 +141,11 @@ additional properties:
 * `[Symbol.toPrimitive]`: returns `value` property for `string` or `default` hint, for `number`
   returns the enum value's index within enum instances values array.
 
-Functions passed in as property values for enum value properties or `commonProperties` will have
-`this` set to the enum value instance. Any functions which take no arguments (ie.
-function.length === 0) will be converted to getters of the enum value instance and should not
-use the function call syntax.
+:warning: Functions passed in as property values for enum value properties or `commonProperties` will
+have `this` set to the enum value instance.
+
+:warning: Any functions which take no arguments (ie. function.length === 0) will be converted to
+getters of the enum value instance and should not use the function call syntax.
 
 ## License
 

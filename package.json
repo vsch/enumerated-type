@@ -1,6 +1,6 @@
 {
   "name": "enumerated-type",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "enum type for javascript",
   "main": "index.js",
   "license": "MIT",
@@ -12,7 +12,7 @@
   "dependencies": {
     "lodash.isfunction": "^3.0.9",
     "lodash.isstring": "^4.0.1",
-    "for-each-break": "^0.1.0"
+    "for-each-break": "^0.2.0"
   },
   "devDependencies": {
     "jest": "^22.4.3"

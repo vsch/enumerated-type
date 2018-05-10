@@ -239,16 +239,28 @@ function Enum(enumName, keyName, values, props) {
     Object.freeze(this);
 }
 
-Enum.prototype.forEach = function forEach(callback, defaultValue) {
-    return forEachBreak.forEach.call(this.values, callback, defaultValue)
+Enum.prototype.forEach = function forEach(callback, thisArg, defaultValue) {
+    return forEachBreak.forEach.call(this.values, callback, thisArg, defaultValue)
 };
 
-Enum.prototype.map = function map(callback) {
-    return forEachBreak.map.call(this.values, callback)
+Enum.prototype.map = function map(callback, thisArg) {
+    return forEachBreak.map.call(this.values, callback, thisArg)
 };
 
-Enum.prototype.filter = function filter(callback) {
-    return forEachBreak.filter.call(this.values, callback)
+Enum.prototype.filter = function filter(callback, thisArg) {
+    return forEachBreak.filter.call(this.values, callback, thisArg)
+};
+
+Enum.prototype.forEachRight = function forEachRight(callback, thisArg, defaultValue) {
+    return forEachBreak.forEachRight.call(this.values, callback, thisArg, defaultValue)
+};
+
+Enum.prototype.mapRight = function mapRight(callback, thisArg) {
+    return forEachBreak.mapRight.call(this.values, callback, thisArg)
+};
+
+Enum.prototype.filterRight = function filterRight(callback, thisArg) {
+    return forEachBreak.filterRight.call(this.values, callback, thisArg)
 };
 
 Enum.prototype[Symbol.iterator] = function iterator() {
