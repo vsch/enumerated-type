@@ -20,20 +20,15 @@ npm install enumerated-type --save
 
 Use `new Enum(enumName, keyPropName, values, commonProperties)` to define an enum for given
 values. The property values of the `values` object can be objects/arrays/functions or
-non-objects. If
+non-objects.
+
+Defining an enum using objects as values:
 
 ```javascript
-const Enum = require("enumerated-type");
-
-const StepType = new Enum("StepType", "stepTypeId", {
-    duty: { stepTypeId: 1, isDuty: true, },
-    variable: { stepTypeId: 2, isVariable: true, },
-    optional: { stepTypeId: 3, isOptional: true, },
-    xor: { stepTypeId: 4, isGateway: true, isXor: true, },
-    and: { stepTypeId: 5, isGateway: true, isAnd: true, },
-    combineXor: { stepTypeId: 6, isGateway: true, isXor: true, isCombined: true, },
-    combineAnd: { stepTypeId: 7, isGateway: true, isAnd: true, isCombined: true, },
-}, {
+// NOTE: defining the enum using intermediate objects allows JetBrains IDEs completion to work better with enums and enum values
+// common enum value properties, instance enum values can override these with their own definitions 
+const StepTypeValue = {
+    stepTypeId: 0,
     isDuty: false,
     isVariable: false,
     isOptional: false,
@@ -41,7 +36,25 @@ const StepType = new Enum("StepType", "stepTypeId", {
     isXor: false,
     isAnd: false,
     isCombined: false,
-});
+};
+
+// NOTE: defining the enum using intermediate objects allows JetBrains IDEs completion to work better with enums and enum values
+// enum value properties
+let StepType = {
+    duty: { stepTypeId: 1, isDuty: true, },
+    variable: { stepTypeId: 2, isVariable: true, },
+    optional: { stepTypeId: 3, isOptional: true, },
+    xor: { stepTypeId: 4, isGateway: true, isXor: true, },
+    and: { stepTypeId: 5, isGateway: true, isAnd: true, },
+    combineXor: { stepTypeId: 6, isGateway: true, isXor: true, isCombined: true, },
+    combineAnd: { stepTypeId: 7, isGateway: true, isAnd: true, isCombined: true, },
+
+    stepTypeId(value) {
+        return StepTypeValue;
+    },
+};
+
+StepType = new Enum("StepType", StepType, StepTypeValue, "stepTypeId");
 ```
 
 `commonProperties` are used for each enum value for its prototype, therefore they provide a
@@ -110,7 +123,7 @@ expect(values).toEqual([
 <!--@formatter:off-->
 
 * `.name` : name of the enum passed to constructor
-* `.values` : array of enum values sorted by `keyPropName` if provided or by value if non-object values.
+* `.values` : array of enum values sorted by `keyPropName` if provided or by `value` if non-object values.
 * `.keys` : array of enum key properties if keyPropName was passed to constructor, otherwise array of enum values which were not objects
 * `[keyPropName](key)`: function taking key and returning enum value whose `keyPropName` equals the value of the key. Only defined if `keyPropName` is defined and is a string. Convenience method for converting key property value to an enum value.
 * `.value(key)`: function taking the a value and returning enum value whose value equals the key. Only defined if `keyPropName` is not defined.

@@ -1,6 +1,6 @@
 {
   "name": "enumerated-type",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "enum type for javascript",
   "main": "index.js",
   "license": "MIT",
@@ -10,8 +10,7 @@
     "url": "https://github.com/vsch"
   },
   "dependencies": {
-    "lodash.isfunction": "^3.0.9",
-    "lodash.isstring": "^4.0.1",
+    "util-type-funcs": "^0.2.2",
     "for-each-break": "^0.2.0"
   },
   "devDependencies": {

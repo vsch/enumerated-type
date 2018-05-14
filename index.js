@@ -1,7 +1,10 @@
-// 'use strict';
+'use strict';
 
-const isFunction = require("lodash.isfunction");
-const isString = require("lodash.isstring");
+const utilTypeFuncs = require('util-type-funcs');
+const isFunction =  utilTypeFuncs.isFunction;
+const isString =  utilTypeFuncs.isString;
+const isValid =  utilTypeFuncs.isValid;
+
 const forEachBreak = require("for-each-break");
 const BREAK = forEachBreak.BREAK;
 const RETURN = forEachBreak.RETURN;
@@ -16,6 +19,13 @@ const UNDEFINED = void 0;
  */
 function enumValueToString() {
     return `[Symbol: Symbol(${this.name}) ${JSON.stringify(this)}]`;
+}
+
+function deleteItem(arr, item) {
+    const index = arr.indexOf(item);
+    if (index >= 0) {
+        arr.splice(index, 1);
+    }
 }
 
 function enumValueFunc(enumInst, enumName, props) {
@@ -42,12 +52,16 @@ function enumValueFunc(enumInst, enumName, props) {
             while (j--) {
                 const key = valueKeys[j];
                 const valueElement = value[key];
-                if (isFunction(valueElement) && valueElement.length === 0) {
-                    Object.defineProperty(this, key, {
-                        get: valueElement,
-                    });
+                const propDescriptor = Object.getOwnPropertyDescriptor(value, key);
+                if (isFunction(valueElement)) {
+                    Object.defineProperty(this, key, Object.assign({}, propDescriptor, {
+                        value: valueElement.bind(this),
+                        configurable: false,
+                    }));
                 } else {
-                    this[key] = isFunction(valueElement) ? valueElement.bind(this) : valueElement;
+                    Object.defineProperty(this, key, Object.assign({}, propDescriptor, {
+                        configurable: false,
+                    }));
                 }
             }
         } else {
@@ -62,19 +76,6 @@ function enumValueFunc(enumInst, enumName, props) {
     };
 
     const propsProto = Object.create(props ? props : null);
-
-    // convert functions without arguments to getters
-    const propKeys = Object.keys(props);
-    let i = propKeys.length;
-    while (i--) {
-        const propKey = propKeys[i];
-        const propValue = propsProto[propKey];
-        if (isFunction(propValue) && propValue.length === 0) {
-            Object.defineProperty(propsProto.__proto__, propKey, {
-                get: propValue,
-            });
-        }
-    }
 
     propsProto.enum = enumInst;
     propsProto.name = enumName;
@@ -115,12 +116,12 @@ function enumValueFunc(enumInst, enumName, props) {
     return enumValue;
 }
 
-function Enum(enumName, keyName, values, props) {
+function Enum(enumName, values, valueProps, keyName = UNDEFINED) {
     if (keyName !== UNDEFINED && keyName !== null && !isString(keyName)) {
         throw `IllegalArgument, keyName must be undefined, null or a string, got '${keyName}'`;
     }
 
-    if (keyName === null || keyName === '') keyName = UNDEFINED;
+    if (!isValid(keyName)) keyName = UNDEFINED;
 
     const enumValues = [];
     Object.defineProperty(this, 'name', {
@@ -129,8 +130,16 @@ function Enum(enumName, keyName, values, props) {
         enumerable: false,
     });
 
-    const enumValueConstructor = enumValueFunc(this, enumName, props);
+    const enumValueConstructor = enumValueFunc(this, enumName, valueProps);
     const names = Object.keys(values);
+
+    // need to remove sample function converting key value to enum value
+    if (keyName !== UNDEFINED) {
+        deleteItem(names, keyName);
+    } else {
+        deleteItem(names, "value");
+    }
+
     const keyNameValues = {};
     const iMax = names.length;
     let objectValues = 0;
