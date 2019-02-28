@@ -29,8 +29,18 @@ let StepType = {
     stepTypeId(value) {
         return StepTypeValue;
     },
+
+    customFunction(works) {
+        return `Yes, it ${works}!`;
+    },
+
+    // see if this is passed
+    listAllValues() {
+        return this.values;
+    },
 };
 
+// will use the name of the enum for display
 StepType = new Enum("StepType", StepType, StepTypeValue, "stepTypeId");
 
 console.log(StepType);
@@ -314,3 +324,27 @@ test('enum value previous is previous enum value', () => {
     expect(StepType.combineAnd.previous).toEqual(StepType.combineXor);
 });
 
+test('enum can have custom functions', () => {
+    expect(StepType.customFunction('works')).toEqual("Yes, it works!");
+});
+
+test('enum can have custom functions with this resolved to enum', () => {
+    expect(StepType.listAllValues()).toBe(StepType.values);
+});
+
+test('enum has dropdownChoices', () => {
+    expect(StepType.dropdownChoices).toEqual([
+        {value: 1, label: 'duty'},
+        {value: 2, label: 'variable'},
+        {value: 3, label: 'optional'},
+        {value: 4, label: 'xor'},
+        {value: 5, label: 'and'},
+        {value: 6, label: 'combineXor'},
+        {value: 7, label: 'combineAnd'},
+    ]);
+});
+
+
+test('enum value() returns default', () => {
+    expect(StepType.stepTypeId(10, StepType.and)).toBe(StepType.and);
+});

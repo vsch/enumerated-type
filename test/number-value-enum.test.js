@@ -343,3 +343,30 @@ test('enum value previous is previous enum value', () => {
     expect(StepType.combineAnd.previous).toEqual(StepType.combineXor);
 });
 
+
+test('enum value(arg) of enum value returns arg', () => {
+    expect(StepType.value(StepType.duty)).toBe(StepType.duty);
+    expect(StepType.value(StepType.variable)).toBe(StepType.variable);
+    expect(StepType.value(StepType.optional)).toBe(StepType.optional);
+    expect(StepType.value(StepType.xor)).toBe(StepType.xor);
+    expect(StepType.value(StepType.and)).toBe(StepType.and);
+    expect(StepType.value(StepType.combineXor)).toBe(StepType.combineXor);
+    expect(StepType.value(StepType.combineAnd)).toBe(StepType.combineAnd);
+});
+
+test('enum has dropdownChoices', () => {
+    expect(StepType.dropdownChoices).toEqual([
+        {value: 1, label: 'duty'},
+        {value: 2, label: 'variable'},
+        {value: 3, label: 'optional'},
+        {value: 4, label: 'xor'},
+        {value: 5, label: 'and'},
+        {value: 6, label: 'combineXor'},
+        {value: 7, label: 'combineAnd'},
+    ]);
+});
+
+
+test('enum value() returns default', () => {
+    expect(StepType.value(10, StepType.and)).toBe(StepType.and);
+});

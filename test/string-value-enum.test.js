@@ -26,7 +26,7 @@ let StepType = {
     combineXor: "f",
     combineAnd: "g",
 
-    value(value) {
+    value(value, defaultValue = undefined) {
         return StepTypeValue;
     }
 };
@@ -351,3 +351,20 @@ test('enum value previous is previous enum value', () => {
     expect(StepType.combineAnd.previous).toEqual(StepType.combineXor);
 });
 
+
+test('enum has dropdownChoices', () => {
+    expect(StepType.dropdownChoices).toEqual([
+        {value: "a", label: 'duty'},
+        {value: "b", label: 'variable'},
+        {value: "c", label: 'optional'},
+        {value: "d", label: 'xor'},
+        {value: "e", label: 'and'},
+        {value: "f", label: 'combineXor'},
+        {value: "g", label: 'combineAnd'},
+    ]);
+});
+
+
+test('enum value() returns default', () => {
+    expect(StepType.value("h", StepType.and)).toBe(StepType.and);
+});

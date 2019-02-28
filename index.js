@@ -1,9 +1,9 @@
 'use strict';
 
 const utilTypeFuncs = require('util-type-funcs');
-const isFunction =  utilTypeFuncs.isFunction;
-const isString =  utilTypeFuncs.isString;
-const isValid =  utilTypeFuncs.isValid;
+const isFunction = utilTypeFuncs.isFunction;
+const isString = utilTypeFuncs.isString;
+const isValid = utilTypeFuncs.isValid;
 
 const forEachBreak = require("for-each-break");
 const BREAK = forEachBreak.BREAK;
@@ -116,12 +116,13 @@ function enumValueFunc(enumInst, enumName, props) {
     return enumValue;
 }
 
-function Enum(enumName, values, valueProps, keyName = UNDEFINED) {
+function Enum(enumName, values, valueProps, keyName = UNDEFINED, displayKeyName = UNDEFINED) {
     if (keyName !== UNDEFINED && keyName !== null && !isString(keyName)) {
         throw `IllegalArgument, keyName must be undefined, null or a string, got '${keyName}'`;
     }
 
     if (!isValid(keyName)) keyName = UNDEFINED;
+    if (!isValid(displayKeyName)) displayKeyName = UNDEFINED;
 
     const enumValues = [];
     Object.defineProperty(this, 'name', {
@@ -141,6 +142,7 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED) {
     }
 
     const keyNameValues = {};
+    const dropdownValues = [];
     const iMax = names.length;
     let objectValues = 0;
     let nonObjectValues = 0;
@@ -149,45 +151,59 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED) {
         const name = names[i];
         const value = values[name];
 
-        const enumValue = new enumValueConstructor(name, value);
+        if (!isFunction(value)) {
+            const enumValue = new enumValueConstructor(name, value);
 
-        if (keyName !== UNDEFINED) {
-            if (value[keyName] === UNDEFINED) {
-                throw `IllegalArgument, key ${keyName} of each enum value cannot be undefined`;
-            }
+            if (keyName !== UNDEFINED) {
+                if (value[keyName] === UNDEFINED) {
+                    throw `IllegalArgument, key ${keyName} of each enum value cannot be undefined`;
+                }
 
-            if (keyNameValues[value[keyName]] !== UNDEFINED) {
-                throw `IllegalArgument, enum with ${keyName} of '${value[keyName]}' is already defined by ${keyNameValues[value[keyName]]._name}`;
-            }
-            keyNameValues[value[keyName]] = enumValue;
-        } else {
-            if (value === UNDEFINED) {
-                throw `IllegalArgument, value of each enum value cannot be undefined`;
-            }
-
-            if (keyNameValues[value] !== UNDEFINED) {
-                throw `IllegalArgument, enum with value of '${value}' is already defined by ${keyNameValues[value]._name}`;
-            }
-            keyNameValues[value] = enumValue;
-        }
-
-        Object.defineProperty(this, name, {
-            value: enumValue,
-            writable: false,
-            enumerable: true,
-        });
-
-        if (typeof value === 'object') {
-            if (isFunction(value)) {
-                functionValues++;
+                if (keyNameValues[value[keyName]] !== UNDEFINED) {
+                    throw `IllegalArgument, enum with ${keyName} of '${value[keyName]}' is already defined by ${keyNameValues[value[keyName]]._name}`;
+                }
+                keyNameValues[value[keyName]] = enumValue;
+                if (displayKeyName !== UNDEFINED) {
+                    dropdownValues.push({value:value[keyName], label: value[displayKeyName]})
+                } else {
+                    dropdownValues.push({value:value[keyName], label: name })
+                }
             } else {
-                objectValues++;
-            }
-        } else {
-            nonObjectValues++;
-        }
+                if (value === UNDEFINED) {
+                    throw `IllegalArgument, value of each enum value cannot be undefined`;
+                }
 
-        enumValues.push(enumValue);
+                if (keyNameValues[value] !== UNDEFINED) {
+                    throw `IllegalArgument, enum with value of '${value}' is already defined by ${keyNameValues[value]._name}`;
+                }
+                keyNameValues[value] = enumValue;
+                if (displayKeyName !== UNDEFINED) {
+                    dropdownValues.push({value:value, label: value[displayKeyName]})
+                } else {
+                    dropdownValues.push({value:value, label: name })
+                }
+            }
+
+            Object.defineProperty(this, name, {
+                value: enumValue,
+                writable: false,
+                enumerable: true,
+            });
+
+            if (typeof value === 'object') {
+                objectValues++;
+            } else {
+                nonObjectValues++;
+            }
+            enumValues.push(enumValue);
+        } else {
+            Object.defineProperty(this, name, {
+                value: value,
+                writable: false,
+                enumerable: false,
+            });
+            functionValues++;
+        }
     }
 
     if (objectValues !== 0 && nonObjectValues !== 0) {
@@ -209,6 +225,14 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED) {
         enumerable: false,
     });
 
+    Object.freeze(dropdownValues);
+
+    Object.defineProperty(this, 'dropdownChoices', {
+        value: dropdownValues,
+        writable: false,
+        enumerable: true,
+    });
+
     if (keyName !== UNDEFINED) {
         const enumKeys = enumValues.map(value => value[keyName]);
         Object.freeze(enumKeys);
@@ -221,10 +245,10 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED) {
 
         // define property with keyName to return matching enumValue to the key
         Object.defineProperty(this, keyName, {
-            value: function (key) {
+            value: function (key, defaultValue = UNDEFINED) {
                 return forEach.call(enumValues, (enumValue) => {
                     if (enumValue[keyName] === key) return BREAK(enumValue);
-                });
+                }) || defaultValue;
             },
         });
     } else {
@@ -235,12 +259,15 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED) {
             enumerable: false,
         });
 
-        // define property with value to return matching enumValue to the key
+        // define function value to return matching enumValue to the key
         Object.defineProperty(this, 'value', {
-            value: function (key) {
+            value: function (key, defaultValue = UNDEFINED) {
+                // allow values to be passed
+                if (this.values.indexOf(key) !== -1) return key;
+
                 return forEach.call(enumValues, (enumValue) => {
                     if (enumValue.value === key) return BREAK(enumValue);
-                });
+                }) || defaultValue;
             },
         });
     }
@@ -249,27 +276,27 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED) {
 }
 
 Enum.prototype.forEach = function forEach(callback, thisArg, defaultValue) {
-    return forEachBreak.forEach.call(this.values, callback, thisArg, defaultValue)
+    return forEachBreak.forEach.call(this.values, callback, thisArg, defaultValue);
 };
 
 Enum.prototype.map = function map(callback, thisArg) {
-    return forEachBreak.map.call(this.values, callback, thisArg)
+    return forEachBreak.map.call(this.values, callback, thisArg);
 };
 
 Enum.prototype.filter = function filter(callback, thisArg) {
-    return forEachBreak.filter.call(this.values, callback, thisArg)
+    return forEachBreak.filter.call(this.values, callback, thisArg);
 };
 
 Enum.prototype.forEachRight = function forEachRight(callback, thisArg, defaultValue) {
-    return forEachBreak.forEachRight.call(this.values, callback, thisArg, defaultValue)
+    return forEachBreak.forEachRight.call(this.values, callback, thisArg, defaultValue);
 };
 
 Enum.prototype.mapRight = function mapRight(callback, thisArg) {
-    return forEachBreak.mapRight.call(this.values, callback, thisArg)
+    return forEachBreak.mapRight.call(this.values, callback, thisArg);
 };
 
 Enum.prototype.filterRight = function filterRight(callback, thisArg) {
-    return forEachBreak.filterRight.call(this.values, callback, thisArg)
+    return forEachBreak.filterRight.call(this.values, callback, thisArg);
 };
 
 Enum.prototype[Symbol.iterator] = function iterator() {
