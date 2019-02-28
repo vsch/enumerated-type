@@ -18,7 +18,7 @@ npm install enumerated-type --save
 
 [![NPM](https://nodei.co/npm/enumerated-type.png)](https://www.npmjs.com/package/enumerated-type)
 
-Use `new Enum(enumName, values, commonProperties, keyPropName, labelPropertyName)` to define an
+Use `new Enum(enumName, values, commonProperties, keyPropName, labelPropName)` to define an
 enum for given values. The property values of the `values` object can be
 objects/arrays/functions or non-objects.
 
@@ -131,9 +131,9 @@ expect(values).toEqual([
 * `.name` : name of the enum passed to constructor
 * `.values` : array of enum values sorted by `keyPropName` if provided or by `value` if
   non-object values.
-* `dropdownChoices` : an array of `{value: xxx, label: yyy}` where `xxx` is the `keyPropertyName`
-  value and `yyy` is the `labelPropertyName` value from the enum `values` used during
-  construction. If `labelPropertyName` is not given then the name of the property will be used.
+* `dropdownChoices` : an array of `{value: xxx, label: yyy}` where `xxx` is the `keyPropName`
+  value and `yyy` is the `labelPropName` value from the enum `values` used during
+  construction. If `labelPropName` is not given then the name of the property will be used.
 * `.keys` : array of enum key properties if keyPropName was passed to constructor, otherwise
   array of enum values which were not objects
 * `[keyPropName](key)`: function taking key and returning enum value whose `keyPropName` equals

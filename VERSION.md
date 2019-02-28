@@ -2,6 +2,7 @@
 
 [TOC]: # " "
 
+- [0.5.14](#0514)
 - [0.5.12](#0512)
 - [0.5.8](#058)
 - [0.5.6](#056)
@@ -14,6 +15,11 @@
 - [0.2.0](#020)
 - [0.1.0](#010)
 
+
+## 0.5.14
+
+* Fix: allow enum values to be passed to `value()` or `keyPropName()` functions since these are
+  valid enums.
 
 ## 0.5.12
 

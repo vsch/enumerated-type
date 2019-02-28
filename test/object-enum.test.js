@@ -348,3 +348,7 @@ test('enum has dropdownChoices', () => {
 test('enum value() returns default', () => {
     expect(StepType.stepTypeId(10, StepType.and)).toBe(StepType.and);
 });
+
+test('enum value() returns key', () => {
+    expect(StepType.stepTypeId(StepType.duty, StepType.and)).toBe(StepType.duty);
+});

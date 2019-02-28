@@ -246,6 +246,9 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED, displayKeyName 
         // define property with keyName to return matching enumValue to the key
         Object.defineProperty(this, keyName, {
             value: function (key, defaultValue = UNDEFINED) {
+                // allow values to be passed
+                if (this.values.indexOf(key) !== -1) return key;
+
                 return forEach.call(enumValues, (enumValue) => {
                     if (enumValue[keyName] === key) return BREAK(enumValue);
                 }) || defaultValue;
