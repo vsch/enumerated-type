@@ -136,9 +136,11 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED, displayKeyName 
 
     // need to remove sample function converting key value to enum value
     if (keyName !== UNDEFINED) {
+        deleteItem(names, "value");
         deleteItem(names, keyName);
     } else {
         deleteItem(names, "value");
+        deleteItem(names, "key");
     }
 
     const keyNameValues = {};
@@ -164,9 +166,9 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED, displayKeyName 
                 }
                 keyNameValues[value[keyName]] = enumValue;
                 if (displayKeyName !== UNDEFINED) {
-                    dropdownValues.push({value:value[keyName], label: value[displayKeyName]})
+                    dropdownValues.push({value: value[keyName], label: value[displayKeyName]});
                 } else {
-                    dropdownValues.push({value:value[keyName], label: name })
+                    dropdownValues.push({value: value[keyName], label: name});
                 }
             } else {
                 if (value === UNDEFINED) {
@@ -178,9 +180,9 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED, displayKeyName 
                 }
                 keyNameValues[value] = enumValue;
                 if (displayKeyName !== UNDEFINED) {
-                    dropdownValues.push({value:value, label: value[displayKeyName]})
+                    dropdownValues.push({value: value, label: value[displayKeyName]});
                 } else {
-                    dropdownValues.push({value:value, label: name })
+                    dropdownValues.push({value: value, label: name});
                 }
             }
 
@@ -234,6 +236,30 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED, displayKeyName 
     });
 
     if (keyName !== UNDEFINED) {
+        Object.defineProperty(this, 'dropdownChoicesExcluding', {
+            value: function () {
+                if (arguments.length === 0) return dropdownValues;
+
+                let result = [];
+                const exclude = {};
+
+                forEach.call(arguments, (arg) => {
+                    const item = this.value(arg);
+                    if (item) exclude[item[keyName]] = true;
+                });
+
+                forEach.call(dropdownValues, (item) => {
+                    if (!exclude.hasOwnProperty(item.value)) {
+                        result.push(item);
+                    }
+                });
+
+                return result;
+            },
+            writable: false,
+            enumerable: true,
+        });
+
         const enumKeys = enumValues.map(value => value[keyName]);
         Object.freeze(enumKeys);
 
@@ -244,7 +270,7 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED, displayKeyName 
         });
 
         // define property with keyName to return matching enumValue to the key
-        Object.defineProperty(this, keyName, {
+        Object.defineProperty(this, 'value', {
             value: function (key, defaultValue = UNDEFINED) {
                 // allow values to be passed
                 if (this.values.indexOf(key) !== -1) return key;
@@ -254,7 +280,43 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED, displayKeyName 
                 }) || defaultValue;
             },
         });
+
+        // define property with keyName to return matching enumValue to the key
+        Object.defineProperty(this, keyName, {
+            value: function (key) {
+                // allow values to be passed
+                if (this.values.indexOf(key) !== -1) return key[keyName];
+
+                return forEach.call(enumValues, (enumValue) => {
+                    if (enumValue[keyName] === key) return BREAK(enumValue[keyName]);
+                }) || this.values[0][keyName];
+            },
+        });
     } else {
+        Object.defineProperty(this, 'dropdownChoicesExcluding', {
+            value: function () {
+                if (arguments.length === 0) return dropdownValues;
+
+                let result = [];
+                const exclude = {};
+
+                forEach.call(arguments, (arg) => {
+                    const item = this.value(arg);
+                    if (item) exclude[item.value] = true;
+                });
+
+                forEach.call(dropdownValues, (item) => {
+                    if (!exclude.hasOwnProperty(item.value)) {
+                        result.push(item);
+                    }
+                });
+
+                return result;
+            },
+            writable: false,
+            enumerable: true,
+        });
+
         const enumKeys = enumValues.map(value => value.value);
         Object.defineProperty(this, 'keys', {
             value: enumKeys,
@@ -271,6 +333,18 @@ function Enum(enumName, values, valueProps, keyName = UNDEFINED, displayKeyName 
                 return forEach.call(enumValues, (enumValue) => {
                     if (enumValue.value === key) return BREAK(enumValue);
                 }) || defaultValue;
+            },
+        });
+
+        // define function value to return matching enumValue to the key
+        Object.defineProperty(this, 'key', {
+            value: function (key) {
+                // allow values to be passed
+                if (this.values.indexOf(key) !== -1) return key;
+
+                return forEach.call(enumValues, (enumValue) => {
+                    if (enumValue.value === key) return BREAK(enumValue);
+                }) || this.values[0];
             },
         });
     }

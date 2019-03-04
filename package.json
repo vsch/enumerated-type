@@ -1,6 +1,6 @@
 {
   "name": "enumerated-type",
-  "version": "0.5.14",
+  "version": "0.5.18",
   "description": "enum type for javascript",
   "main": "index.js",
   "license": "MIT",

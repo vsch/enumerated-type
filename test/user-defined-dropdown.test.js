@@ -26,8 +26,12 @@ let StepType = {
     combineXor: { stepTypeId: 6, isGateway: true, isXor: true, isCombined: true, label: "Combine Xor"},
     combineAnd: { stepTypeId: 7, isGateway: true, isAnd: true, isCombined: true, label: "Combine And"},
 
-    stepTypeId(value) {
+    value(value) {
         return StepTypeValue;
+    },
+
+    stepTypeId(value) {
+        return StepTypeValue.stepTypeId;
     },
 
     customFunction(works) {
@@ -52,6 +56,66 @@ test('enum has dropdownChoices', () => {
         {value: 5, label: "And"},
         {value: 6, label: "Combine Xor"},
         {value: 7, label: "Combine And"},
+    ]);
+});
+
+test('enum has dropdownChoicesExcluding()', () => {
+    expect(StepType.dropdownChoicesExcluding()).toEqual([
+        {value: 1, label: 'Duty'},
+        {value: 2, label: 'Variable'},
+        {value: 3, label: 'Optional'},
+        {value: 4, label: 'Xor'},
+        {value: 5, label: 'And'},
+        {value: 6, label: 'Combine Xor'},
+        {value: 7, label: 'Combine And'},
+    ]);
+});
+
+test('enum has dropdownChoicesExcluding()', () => {
+    expect(StepType.dropdownChoicesExcluding(StepType.duty, StepType.variable)).toEqual([
+        // {value: 1, label: 'Duty'},
+        // {value: 2, label: 'Variable'},
+        {value: 3, label: 'Optional'},
+        {value: 4, label: 'Xor'},
+        {value: 5, label: 'And'},
+        {value: 6, label: 'Combine Xor'},
+        {value: 7, label: 'Combine And'},
+    ]);
+});
+
+test('enum has dropdownChoicesExcluding()', () => {
+    expect(StepType.dropdownChoicesExcluding(StepType.duty, StepType.combineAnd)).toEqual([
+        // {value: 1, label: 'Duty'},
+        {value: 2, label: 'Variable'},
+        {value: 3, label: 'Optional'},
+        {value: 4, label: 'Xor'},
+        {value: 5, label: 'And'},
+        {value: 6, label: 'Combine Xor'},
+        // {value: 7, label: 'Combine And'},
+    ]);
+});
+
+test('enum has dropdownChoicesExcluding()', () => {
+    expect(StepType.dropdownChoicesExcluding(StepType.optional, StepType.xor)).toEqual([
+        {value: 1, label: 'Duty'},
+        {value: 2, label: 'Variable'},
+        // {value: 3, label: 'Optional'},
+        // {value: 4, label: 'Xor'},
+        {value: 5, label: 'And'},
+        {value: 6, label: 'Combine Xor'},
+        {value: 7, label: 'Combine And'},
+    ]);
+});
+
+test('enum has dropdownChoicesExcluding()', () => {
+    expect(StepType.dropdownChoicesExcluding(8, 9, 10)).toEqual([
+        {value: 1, label: 'Duty'},
+        {value: 2, label: 'Variable'},
+        {value: 3, label: 'Optional'},
+        {value: 4, label: 'Xor'},
+        {value: 5, label: 'And'},
+        {value: 6, label: 'Combine Xor'},
+        {value: 7, label: 'Combine And'},
     ]);
 });
 

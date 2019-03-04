@@ -2,6 +2,8 @@
 
 [TOC]: # " "
 
+- [0.5.18](#0518)
+- [0.5.16](#0516)
 - [0.5.14](#0514)
 - [0.5.12](#0512)
 - [0.5.8](#058)
@@ -15,6 +17,21 @@
 - [0.2.0](#020)
 - [0.1.0](#010)
 
+
+## 0.5.18
+
+* Add: `dropdownChoicesExcluding(vararg exclude)` to return choices array but without the
+  choices for the given enum items in the choice list
+
+## 0.5.16
+
+* Change: for enums `value(arg, defaultValue = undefined)` where `arg` is the value of the enum
+  items or `keyProp` value of object type items. Returns matching enum item or `defaultValue`.
+* Change: add `key(arg)` for valued items and `keyPropName(arg)` for object
+  type items where `keyPropName` is the enum's key property of the items and `arg` is either a
+  value of this property for some enum item or an enum item. Returns the value of this property
+  for the found enum item or this property of the first enum item. ie. it is a cleanup function
+  which will use a valid item property value or return a default which is the first enum item.
 
 ## 0.5.14
 

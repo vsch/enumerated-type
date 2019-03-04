@@ -18,16 +18,20 @@ const StepTypeValue = {
 // NOTE: defining the enum using intermediate objects allows JetBrains IDEs completion to work better with enums and enum values
 // enum value properties
 let StepType = {
-    duty: { stepTypeId: 1, isDuty: true, },
-    variable: { stepTypeId: 2, isVariable: true, },
-    optional: { stepTypeId: 3, isOptional: true, },
-    xor: { stepTypeId: 4, isGateway: true, isXor: true, },
-    and: { stepTypeId: 5, isGateway: true, isAnd: true, },
-    combineXor: { stepTypeId: 6, isGateway: true, isXor: true, isCombined: true, },
-    combineAnd: { stepTypeId: 7, isGateway: true, isAnd: true, isCombined: true, },
+    duty: {stepTypeId: 1, isDuty: true,},
+    variable: {stepTypeId: 2, isVariable: true,},
+    optional: {stepTypeId: 3, isOptional: true,},
+    xor: {stepTypeId: 4, isGateway: true, isXor: true,},
+    and: {stepTypeId: 5, isGateway: true, isAnd: true,},
+    combineXor: {stepTypeId: 6, isGateway: true, isXor: true, isCombined: true,},
+    combineAnd: {stepTypeId: 7, isGateway: true, isAnd: true, isCombined: true,},
+
+    value(value) {
+        return StepTypeValue;
+    },
 
     stepTypeId(value) {
-        return StepTypeValue;
+        return StepTypeValue.stepTypeId;
     },
 
     customFunction(works) {
@@ -56,15 +60,15 @@ test('has all values in order of keys', () => {
             name: enumValue.name,
             key: enumValue.stepTypeId,
             index: enumValue.index,
-        }
+        };
     })).toEqual([
-        { name: "duty", key: 1, index: 0 },
-        { name: "variable", key: 2, index: 1 },
-        { name: "optional", key: 3, index: 2 },
-        { name: "xor", key: 4, index: 3 },
-        { name: "and", key: 5, index: 4 },
-        { name: "combineXor", key: 6, index: 5 },
-        { name: "combineAnd", key: 7, index: 6 },
+        {name: "duty", key: 1, index: 0},
+        {name: "variable", key: 2, index: 1},
+        {name: "optional", key: 3, index: 2},
+        {name: "xor", key: 4, index: 3},
+        {name: "and", key: 5, index: 4},
+        {name: "combineXor", key: 6, index: 5},
+        {name: "combineAnd", key: 7, index: 6},
     ]);
 });
 
@@ -97,13 +101,13 @@ test('all values have correct properties', () => {
 
     expect(values).toEqual([
         // @formatter:off
-        { "isAnd": false, "isCombined": false, "isDuty": true, "isGateway": false, "isOptional": false, "isVariable": false, "isXor": false, "name": "duty", "stepTypeId": 1, },
-        { "isAnd": false, "isCombined": false, "isDuty": false, "isGateway": false, "isOptional": false, "isVariable": true, "isXor": false, "name": "variable", "stepTypeId": 2, },
-        { "isAnd": false, "isCombined": false, "isDuty": false, "isGateway": false, "isOptional": true, "isVariable": false, "isXor": false, "name": "optional", "stepTypeId": 3, },
-        { "isAnd": false, "isCombined": false, "isDuty": false, "isGateway": true, "isOptional": false, "isVariable": false, "isXor": true, "name": "xor", "stepTypeId": 4, },
-        { "isAnd": true, "isCombined": false, "isDuty": false, "isGateway": true, "isOptional": false, "isVariable": false, "isXor": false, "name": "and", "stepTypeId": 5, },
-        { "isAnd": false, "isCombined": true, "isDuty": false, "isGateway": true, "isOptional": false, "isVariable": false, "isXor": true, "name": "combineXor", "stepTypeId": 6, },
-        { "isAnd": true, "isCombined": true, "isDuty": false, "isGateway": true, "isOptional": false, "isVariable": false, "isXor": false, "name": "combineAnd", "stepTypeId": 7, },
+        {"isAnd": false, "isCombined": false, "isDuty": true, "isGateway": false, "isOptional": false, "isVariable": false, "isXor": false, "name": "duty", "stepTypeId": 1,},
+        {"isAnd": false, "isCombined": false, "isDuty": false, "isGateway": false, "isOptional": false, "isVariable": true, "isXor": false, "name": "variable", "stepTypeId": 2,},
+        {"isAnd": false, "isCombined": false, "isDuty": false, "isGateway": false, "isOptional": true, "isVariable": false, "isXor": false, "name": "optional", "stepTypeId": 3,},
+        {"isAnd": false, "isCombined": false, "isDuty": false, "isGateway": true, "isOptional": false, "isVariable": false, "isXor": true, "name": "xor", "stepTypeId": 4,},
+        {"isAnd": true, "isCombined": false, "isDuty": false, "isGateway": true, "isOptional": false, "isVariable": false, "isXor": false, "name": "and", "stepTypeId": 5,},
+        {"isAnd": false, "isCombined": true, "isDuty": false, "isGateway": true, "isOptional": false, "isVariable": false, "isXor": true, "name": "combineXor", "stepTypeId": 6,},
+        {"isAnd": true, "isCombined": true, "isDuty": false, "isGateway": true, "isOptional": false, "isVariable": false, "isXor": false, "name": "combineAnd", "stepTypeId": 7,},
         // @formatter:on
     ]);
 });
@@ -120,7 +124,7 @@ test('all keys in keys', () => {
 });
 
 test('all values can be found by keys', () => {
-    expect([1, 2, 3, 4, 5, 6, 7,].map(key => StepType.stepTypeId(key))).toEqual([
+    expect([1, 2, 3, 4, 5, 6, 7,].map(key => StepType.value(key))).toEqual([
         StepType.duty,
         StepType.variable,
         StepType.optional,
@@ -128,6 +132,18 @@ test('all values can be found by keys', () => {
         StepType.and,
         StepType.combineXor,
         StepType.combineAnd,
+    ]);
+});
+
+test('all values can be found by keys', () => {
+    expect([1, 2, 3, 4, 5, 6, 7,].map(key => StepType.stepTypeId(key))).toEqual([
+        StepType.duty.stepTypeId,
+        StepType.variable.stepTypeId,
+        StepType.optional.stepTypeId,
+        StepType.xor.stepTypeId,
+        StepType.and.stepTypeId,
+        StepType.combineXor.stepTypeId,
+        StepType.combineAnd.stepTypeId,
     ]);
 });
 
@@ -344,11 +360,86 @@ test('enum has dropdownChoices', () => {
     ]);
 });
 
+test('enum has dropdownChoicesExcluding()', () => {
+    expect(StepType.dropdownChoicesExcluding()).toEqual([
+        {value: 1, label: 'duty'},
+        {value: 2, label: 'variable'},
+        {value: 3, label: 'optional'},
+        {value: 4, label: 'xor'},
+        {value: 5, label: 'and'},
+        {value: 6, label: 'combineXor'},
+        {value: 7, label: 'combineAnd'},
+    ]);
+});
+
+test('enum has dropdownChoicesExcluding()', () => {
+    expect(StepType.dropdownChoicesExcluding(StepType.duty, StepType.variable)).toEqual([
+        // {value: 1, label: 'duty'},
+        // {value: 2, label: 'variable'},
+        {value: 3, label: 'optional'},
+        {value: 4, label: 'xor'},
+        {value: 5, label: 'and'},
+        {value: 6, label: 'combineXor'},
+        {value: 7, label: 'combineAnd'},
+    ]);
+});
+
+test('enum has dropdownChoicesExcluding()', () => {
+    expect(StepType.dropdownChoicesExcluding(StepType.duty, StepType.combineAnd)).toEqual([
+        // {value: 1, label: 'duty'},
+        {value: 2, label: 'variable'},
+        {value: 3, label: 'optional'},
+        {value: 4, label: 'xor'},
+        {value: 5, label: 'and'},
+        {value: 6, label: 'combineXor'},
+        // {value: 7, label: 'combineAnd'},
+    ]);
+});
+
+test('enum has dropdownChoicesExcluding()', () => {
+    expect(StepType.dropdownChoicesExcluding(StepType.optional, StepType.xor)).toEqual([
+        {value: 1, label: 'duty'},
+        {value: 2, label: 'variable'},
+        // {value: 3, label: 'optional'},
+        // {value: 4, label: 'xor'},
+        {value: 5, label: 'and'},
+        {value: 6, label: 'combineXor'},
+        {value: 7, label: 'combineAnd'},
+    ]);
+});
+
+test('enum has dropdownChoicesExcluding()', () => {
+    expect(StepType.dropdownChoicesExcluding(8, 9, 10)).toEqual([
+        {value: 1, label: 'duty'},
+        {value: 2, label: 'variable'},
+        {value: 3, label: 'optional'},
+        {value: 4, label: 'xor'},
+        {value: 5, label: 'and'},
+        {value: 6, label: 'combineXor'},
+        {value: 7, label: 'combineAnd'},
+    ]);
+});
 
 test('enum value() returns default', () => {
-    expect(StepType.stepTypeId(10, StepType.and)).toBe(StepType.and);
+    expect(StepType.value(10, StepType.and)).toBe(StepType.and);
+});
+
+test('enum value() returns default', () => {
+    expect(StepType.value(StepType.duty)).toBe(StepType.duty);
+});
+
+test('enum value() returns default', () => {
+    expect(StepType.value(StepType.duty, StepType.and)).toBe(StepType.duty);
+});
+
+test('enum key() returns default key', () => {
+    expect(StepType.stepTypeId(10)).toBe(StepType.duty.stepTypeId);
+});
+
+test('enum key() returns default key', () => {
+    expect(StepType.stepTypeId(10, StepType.and)).toBe(StepType.duty.stepTypeId);
 });
 
 test('enum value() returns key', () => {
-    expect(StepType.stepTypeId(StepType.duty, StepType.and)).toBe(StepType.duty);
+    expect(StepType.stepTypeId(StepType.duty, StepType.and)).toBe(StepType.duty.stepTypeId);
 });
