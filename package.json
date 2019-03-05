@@ -1,6 +1,6 @@
 {
   "name": "enumerated-type",
-  "version": "0.5.18",
+  "version": "0.5.20",
   "description": "enum type for javascript",
   "main": "index.js",
   "license": "MIT",
@@ -10,11 +10,11 @@
     "url": "https://github.com/vsch"
   },
   "dependencies": {
-    "util-type-funcs": "^0.2.4",
-    "for-each-break": "^0.2.0"
+    "util-type-funcs": "^0.2.8",
+    "for-each-break": "^0.2.2"
   },
   "devDependencies": {
-    "jest": "^22.4.3"
+    "jest": "^24.1.0"
   },
   "scripts": {
     "test": "jest"
