@@ -2,6 +2,7 @@
 
 [TOC]: # " "
 
+- [0.5.22](#0522)
 - [0.5.20](#0520)
 - [0.5.18](#0518)
 - [0.5.16](#0516)
@@ -19,8 +20,12 @@
 - [0.1.0](#010)
 
 
-## 0.5.20
+## 0.5.22
 
+* Fix: update jest version
+* Fix: update `for-each-break`
+
+## 0.5.20
 
 * Fix: update dependencies
 
@@ -33,11 +38,11 @@
 
 * Change: for enums `value(arg, defaultValue = undefined)` where `arg` is the value of the enum
   items or `keyProp` value of object type items. Returns matching enum item or `defaultValue`.
-* Change: add `key(arg)` for valued items and `keyPropName(arg)` for object
-  type items where `keyPropName` is the enum's key property of the items and `arg` is either a
-  value of this property for some enum item or an enum item. Returns the value of this property
-  for the found enum item or this property of the first enum item. ie. it is a cleanup function
-  which will use a valid item property value or return a default which is the first enum item.
+* Change: add `key(arg)` for valued items and `keyPropName(arg)` for object type items where
+  `keyPropName` is the enum's key property of the items and `arg` is either a value of this
+  property for some enum item or an enum item. Returns the value of this property for the found
+  enum item or this property of the first enum item. ie. it is a cleanup function which will use
+  a valid item property value or return a default which is the first enum item.
 
 ## 0.5.14
 
